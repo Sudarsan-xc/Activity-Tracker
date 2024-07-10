@@ -1,31 +1,35 @@
 const router = require("express").Router();
-//crud
+const PDFController = require("./pdf.controller");
 router.get("/", (req, res) => {
-  res.json({ msg: "All the data in the database!" });
+  res.json({ msg: "All the pdf data in the database" });
 });
-
-router.get("/:id", (req, res) => {
-  const id = req.params.id;
-  res.json({ msg: `We are reading ${id} from the database!"` });
+router.get("/:id", (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (id === "sudarsan") throw new Error("sudarsan string provided");
+    res.json({ msg: `we are adding ${id} from database` });
+  } catch (e) {
+    next(e);
+  }
 });
-
-router.post("/", (req, res) => {
-  res.json({ data: req.body, msg: "Posting New Data " });
+router.post("/", async (req, res, next) => {
+  try {
+    const data = await PDFController.createPDF(req.body);
+    res.json({ data: data, msg: `Generating PDF ` });
+  } catch (e) {
+    next(e);
+  }
 });
-
 router.put("/:id", (req, res) => {
-  const { id } = req.params;
-  res.json({ data: req.body, msg: `updating ${id} from database` });
+  const id = req.params.id;
+  res.json({ data: req.body, msg: "Updating new data" });
 });
-
 router.patch("/:id", (req, res) => {
-  const { id } = req.params;
-  res.json({ data: req.body, msg: `patching ${id} from database` });
+  const id = req.params.id;
+  res.json({ data: req.body, msg: "Patching new data" });
 });
-
 router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  res.json({ msg: `deleting ${id} from database` });
+  const id = req.params.id;
+  res.json({ msg: "Deleting new data" });
 });
-
 module.exports = router;
